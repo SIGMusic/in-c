@@ -1,0 +1,54 @@
+"In C" in Python
+
+SIGMusic 2007-2008
+
+Jacob Lee <artdent@gmail.com>, with help from Justin King
+<kingjkk@gmail.com> and Aaron Ringgenberg <aringge2@uiuc.edu>.
+
+1. Building
+
+This program requires PyAlsa. The tarball includes binaries that may
+or may not work with your system. If they do not, you can get PyAlsa at
+ftp://ftp.alsa-project.org/pub/pyalsa/pyalsa-1.0.16.tar.bz2 .
+
+2. Running
+
+Make sure that the "snd_seq_device" kernel module is installed.
+Timidity should be running in the background. The command that we used
+is:
+timidity -iAv -Os # for the ALSA backend
+timidity -iAv -Oj # for the Jack backend
+
+We ran into a weird issue where timidity would receive commands but
+not actually play any sound. Getting around that involved using some
+other program (e.g. vkeybd) to send some midi messages to timidity, at
+which point everything would start working *shrug*.
+
+Run controller.py to start the noise.
+Run gui.py to start the gui.
+
+While the program automatically tries to connect to timidity, you
+should in theory be able to use any other backend (e.g. fluidsynth or
+a hardware synthesizer) by just making the connection yourself (using
+aconnect, alsa-patch-bay, or qjackctl). This mode of operation is
+untested.
+
+3. TODO / bugs
+
+Changing the master volume isn't implemented.
+Changing the tempo breaks everything.
+
+The score isn't perfect, since we don't support ties or grace notes.
+
+The individual instrument threads tend to get out of sync over time
+with the alsa event queue: the latter is scheduled by the kernel and
+is guaranteed to be perfect, while the former guesses by calling
+time.sleep() for the correct durations. This is also why changing the
+tempo doesn't work right. This problem is exacerbated under high CPU load.
+
+Any further WTFs are due either to 7:00 A.M. coding the day of EOH or
+due to my recent exposure to Erlang (the threads are decoupled to a
+ridiculous degree, with all sorts of gratuitous message-passing). Oh,
+and the commenting is rather sparse.
+
+Happy hacking!
